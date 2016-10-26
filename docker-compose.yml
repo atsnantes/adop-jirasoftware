@@ -1,0 +1,43 @@
+version: '2'
+services:
+
+ jirasoftware-postgres:
+  container_name: jirasoftware-postgres
+  image: postgres:9.4
+  ports:
+    - "5432:5432"
+  environment:
+    POSTGRES_PASSWORD: "postgres"
+    POSTGRES_ENCODING: "UTF8"
+  volumes:
+    - jirasoftware_postgres_data:/var/lib/postgresql/data
+
+ jirasoftware:
+  container_name: jirasoftware
+  build: .
+  image: atsnantes/adop-jirasoftware-dev:latest
+  ports:
+    - "8080:8080"
+  environment:
+    ADOP_PROXYNAME: "192.168.99.100"
+    ADOP_PROXYPORT: "80"
+    ADOP_PROXYSCHEME: "http"
+    JIRA_ROOTPATH: "/jira"
+    DB_HOST: "jirasoftware-postgres"
+    DB_POSTGRES_PASSWORD: "postgres"
+    JIRA_DB: "jirasoftware"
+    JIRA_DB_USER: "jirasoftware"
+    JIRA_DB_PASSWORD: "jirasoftware"
+  volumes:
+    - jirasoftware_data:/var/atlassian/jira
+    
+volumes:
+  jirasoftware_data:
+    driver: local
+  jirasoftware_postgres_data:
+    driver: local
+    
+networks:
+  default:
+    external:
+      name: local_network

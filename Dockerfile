@@ -31,7 +31,7 @@ RUN set -x \
     && touch -d "@0"           "${JIRA_INSTALL}/conf/server.xml"
 
 COPY "resources/dbconfig.xml.template" "${JIRA_HOME}/"
-RUN chown daemon:daemon "${JIRA_HOME}/dbconfig.xml"
+RUN chown daemon:daemon "${JIRA_HOME}/dbconfig.xml.template"
 
 COPY "resources/docker-entrypoint.sh" "/"
 RUN chmod +x /docker-entrypoint.sh

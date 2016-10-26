@@ -30,6 +30,12 @@ RUN set -x \
     && echo -e                 "\njira.home=$JIRA_HOME" >> "${JIRA_INSTALL}/atlassian-jira/WEB-INF/classes/jira-application.properties" \
     && touch -d "@0"           "${JIRA_INSTALL}/conf/server.xml"
 
+COPY "resources/dbconfig.xml.template" "${JIRA_HOME}/"
+RUN chown daemon:daemon "${JIRA_HOME}/dbconfig.xml"
+
+COPY "resources/docker-entrypoint.sh" "/"
+RUN chmod +x /docker-entrypoint.sh
+
 # Use the default unprivileged account. This could be considered bad practice
 # on systems where multiple processes end up being executed by 'daemon' but
 # here we only ever run one process anyway.
@@ -46,10 +52,6 @@ EXPOSE 8080
 # Set the default working directory as the installation directory.
 WORKDIR /var/atlassian/jira
 
-COPY "resources/dbconfig.xml.template" "${JIRA_HOME}/"
-
-COPY "resources/docker-entrypoint.sh" "/"
-RUN chmod +x /docker-entrypoint.sh
 ENTRYPOINT ["/docker-entrypoint.sh"]
 
 # Run Atlassian JIRA as a foreground process by default.

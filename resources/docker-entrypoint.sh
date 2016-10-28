@@ -32,6 +32,9 @@ if [[ -n "${DB_HOST}" && -n "${JIRA_DB}" && -n "${JIRA_DB_USER}" && -n "${JIRA_D
 	
 fi
 
+echo "Modify loading plugin timeout"
+sed "s|JVM_SUPPORT_RECOMMENDED_ARGS=.*|JVM_SUPPORT_RECOMMENDED_ARGS=\"-Datlassian.plugins.enable.wait=300\"|g" -i "${JIRA_INSTALL}/bin/setenv.sh"
+
 echo "Checking Postgres availability ..."
 until databasesList=$(PGPASSWORD="${DB_POSTGRES_PASSWORD}" psql -h "${DB_HOST}" -p "5432" -U "postgres"  -c '\l'); do
   echo "Postgres is unavailable - sleeping 1s ..."
